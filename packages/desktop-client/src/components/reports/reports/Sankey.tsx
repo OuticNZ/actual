@@ -532,6 +532,7 @@ function SankeyInner({ widget }: SankeyInnerProps) {
       [GraphLayers.Budget]: t('Budget'),
       [GraphLayers.CategoryGroup]: t('Category group'),
       [GraphLayers.Category]: t('Category'),
+      [GraphLayers.CategoryTag]: t('Category tag'),
     }),
     [t],
   );
