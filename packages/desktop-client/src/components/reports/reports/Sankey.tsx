@@ -49,6 +49,7 @@ import { useReport } from '#components/reports/useReport';
 import { fromDateRepr } from '#components/reports/util';
 import { useCategories } from '#hooks/useCategories';
 import { useDashboardWidget } from '#hooks/useDashboardWidget';
+import { useFeatureFlag } from '#hooks/useFeatureFlag';
 import { useFormatList } from '#hooks/useFormatList';
 import { useLocale } from '#hooks/useLocale';
 import { useNavigate } from '#hooks/useNavigate';
@@ -87,8 +88,15 @@ type LayerRange = {
   to: GraphLayers;
 };
 
-function getAvailableLayers(mode: GraphMode): GraphLayers[] {
+function getAvailableLayers(
+  mode: GraphMode,
+  includeCategoryTag = false,
+): GraphLayers[] {
   return GRAPH_LAYER_ORDER.filter(layer => {
+    if (layer === GraphLayers.CategoryTag && !includeCategoryTag) {
+      return false;
+    }
+
     if (mode === 'budgeted') {
       return layer !== GraphLayers.IncomePayee;
     }
@@ -111,8 +119,9 @@ function normalizeLayerRange(
   mode: GraphMode,
   candidate: LayerRange,
   changedDirection?: LayerDirection,
+  includeCategoryTag = false,
 ): LayerRange {
-  const availableLayers = getAvailableLayers(mode);
+  const availableLayers = getAvailableLayers(mode, includeCategoryTag);
   const fallback = getDefaultLayerRange(mode);
   const defaultFromIndex = availableLayers.indexOf(fallback.from);
   const defaultToIndex = availableLayers.indexOf(fallback.to);
@@ -158,8 +167,9 @@ function getLayerMenuItems(
   mode: GraphMode,
   direction: LayerDirection,
   otherLayer: GraphLayers,
+  includeCategoryTag = false,
 ): GraphLayers[] {
-  const availableLayers = getAvailableLayers(mode);
+  const availableLayers = getAvailableLayers(mode, includeCategoryTag);
   const otherIndex = availableLayers.indexOf(otherLayer);
 
   if (otherIndex === -1) {
@@ -430,6 +440,13 @@ function SankeyInner({ widget }: SankeyInnerProps) {
   const navigate = useNavigate();
   const { isNarrowWidth } = useResponsive();
 
+  const categoryTagsEnabled = useFeatureFlag('categoryTags');
+  const sankeyReportCategoryTagsEnabled = useFeatureFlag(
+    'sankeyReportCategoryTags',
+  );
+  const includeCategoryTagLayer =
+    categoryTagsEnabled && sankeyReportCategoryTagsEnabled;
+
   const {
     conditions,
     conditionsOp,
@@ -507,22 +524,29 @@ function SankeyInner({ widget }: SankeyInnerProps) {
   );
 
   const [layerRange, setLayerRange] = useState<LayerRange>(() =>
-    normalizeLayerRange(widget?.meta?.mode ?? 'spent', {
-      from:
-        (widget?.meta?.layerFrom as GraphLayers) ??
-        getDefaultLayerRange(widget?.meta?.mode ?? 'spent').from,
-      to:
-        (widget?.meta?.layerTo as GraphLayers) ??
-        getDefaultLayerRange(widget?.meta?.mode ?? 'spent').to,
-    }),
+    normalizeLayerRange(
+      widget?.meta?.mode ?? 'spent',
+      {
+        from:
+          (widget?.meta?.layerFrom as GraphLayers) ??
+          getDefaultLayerRange(widget?.meta?.mode ?? 'spent').from,
+        to:
+          (widget?.meta?.layerTo as GraphLayers) ??
+          getDefaultLayerRange(widget?.meta?.mode ?? 'spent').to,
+      },
+      undefined,
+      includeCategoryTagLayer,
+    ),
   );
 
   const layerFrom = layerRange.from;
   const layerTo = layerRange.to;
 
   useEffect(() => {
-    setLayerRange(prev => normalizeLayerRange(graphMode, prev));
-  }, [graphMode]);
+    setLayerRange(prev =>
+      normalizeLayerRange(graphMode, prev, undefined, includeCategoryTagLayer),
+    );
+  }, [graphMode, includeCategoryTagLayer]);
 
   const layerLabels = useMemo<Record<GraphLayers, string>>(
     () => ({
@@ -538,12 +562,14 @@ function SankeyInner({ widget }: SankeyInnerProps) {
   );
 
   const fromLayerMenuItems = useMemo(
-    () => getLayerMenuItems(graphMode, 'from', layerTo),
-    [graphMode, layerTo],
+    () =>
+      getLayerMenuItems(graphMode, 'from', layerTo, includeCategoryTagLayer),
+    [graphMode, layerTo, includeCategoryTagLayer],
   );
   const toLayerMenuItems = useMemo(
-    () => getLayerMenuItems(graphMode, 'to', layerFrom),
-    [graphMode, layerFrom],
+    () =>
+      getLayerMenuItems(graphMode, 'to', layerFrom, includeCategoryTagLayer),
+    [graphMode, layerFrom, includeCategoryTagLayer],
   );
 
   function onChangeLayer(direction: LayerDirection, layer: GraphLayers) {
@@ -553,7 +579,12 @@ function SankeyInner({ widget }: SankeyInnerProps) {
           ? { ...prev, from: layer }
           : { ...prev, to: layer };
 
-      return normalizeLayerRange(graphMode, next, direction);
+      return normalizeLayerRange(
+        graphMode,
+        next,
+        direction,
+        includeCategoryTagLayer,
+      );
     });
   }
 

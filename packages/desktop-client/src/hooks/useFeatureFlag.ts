@@ -17,6 +17,7 @@ const DEFAULT_FEATURE_FLAG_STATE: Record<FeatureFlag, boolean> = {
   mobileCalculator: false,
   monteCarloReport: false,
   categoryTags: false,
+  sankeyReportCategoryTags: false,
 };
 
 export function useFeatureFlag(name: FeatureFlag): boolean {

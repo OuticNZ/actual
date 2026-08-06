@@ -157,6 +157,9 @@ export function ExperimentalFeatures() {
   const goalTemplatesUIEnabled = useFeatureFlag('goalTemplatesUIEnabled');
   const showGoalTemplatesUI = goalTemplatesEnabled || goalTemplatesUIEnabled;
 
+  const sankeyReportEnabled = useFeatureFlag('sankeyReport');
+  const categoryTagsEnabled = useFeatureFlag('categoryTags');
+
   const showServerPrefs =
     localStorage.getItem('devEnableServerPrefs') === 'true';
 
@@ -220,6 +223,22 @@ export function ExperimentalFeatures() {
             >
               <Trans>Sankey report</Trans>
             </FeatureToggle>
+            {sankeyReportEnabled && (
+              <View style={{ paddingLeft: 22 }}>
+                <FeatureToggle
+                  flag="sankeyReportCategoryTags"
+                  disableToggle={!categoryTagsEnabled}
+                  error={
+                    <Trans>
+                      Requires the Category tags experimental feature to be
+                      enabled first.
+                    </Trans>
+                  }
+                >
+                  <Trans>Subfeature: Sankey category tag layer</Trans>
+                </FeatureToggle>
+              </View>
+            )}
             <FeatureToggle
               flag="balanceForecastReport"
               feedbackLink="https://github.com/actualbudget/actual/issues/7669"
