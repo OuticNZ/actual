@@ -31,6 +31,7 @@ type SidebarCategoryProps = {
   isLast?: boolean;
   onEditName: (id: CategoryEntity['id']) => void;
   onSave: (category: CategoryEntity) => void;
+  onEditTags?: (id: CategoryEntity['id']) => void;
   onHideNewCategory?: () => void;
 } & (
   | {
@@ -55,6 +56,7 @@ export function SidebarCategory({
   isLast,
   onEditName,
   onSave,
+  onEditTags,
   onDelete,
   onHideNewCategory,
 }: SidebarCategoryProps) {
@@ -76,6 +78,11 @@ export function SidebarCategory({
         name: 'toggle-visibility',
         text: category.hidden ? t('Show') : t('Hide'),
         onClick: () => onSave({ ...category, hidden: !category.hidden }),
+      },
+      onEditTags && {
+        name: 'edit-tags',
+        text: t('Tags'),
+        onClick: () => onEditTags(category.id),
       },
       {
         name: 'delete',

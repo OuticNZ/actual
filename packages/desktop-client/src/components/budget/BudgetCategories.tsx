@@ -51,6 +51,7 @@ type BudgetCategoriesProps = {
   onSaveGroup: (group: CategoryGroupEntity) => void;
   onDeleteCategory: (id: CategoryEntity['id']) => void;
   onDeleteGroup: (id: CategoryGroupEntity['id']) => void;
+  onEditTags?: (id: CategoryEntity['id']) => void;
   onApplyBudgetTemplatesInGroup: (categoryIds: CategoryEntity['id'][]) => void;
   onSortCategories?: (
     groupId: CategoryGroupEntity['id'],
@@ -72,6 +73,7 @@ export const BudgetCategories = memo<BudgetCategoriesProps>(
     onSaveGroup,
     onDeleteCategory,
     onDeleteGroup,
+    onEditTags,
     onApplyBudgetTemplatesInGroup,
     onSortCategories,
     onReorderCategory,
@@ -321,6 +323,7 @@ export const BudgetCategories = memo<BudgetCategoriesProps>(
                   onEditMonth={onEditMonth}
                   onSave={_onSaveCategory}
                   onDelete={onDeleteCategory}
+                  onEditTags={onEditTags}
                   onDragChange={onDragChange}
                   onReorder={onReorderCategory}
                   onBudgetAction={onBudgetAction}
@@ -364,6 +367,7 @@ export const BudgetCategories = memo<BudgetCategoriesProps>(
                   onEditMonth={onEditMonth}
                   onSave={_onSaveCategory}
                   onDelete={onDeleteCategory}
+                  onEditTags={onEditTags}
                   onDragChange={onDragChange}
                   onReorder={onReorderCategory}
                   onBudgetAction={onBudgetAction}

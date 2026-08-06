@@ -10,7 +10,8 @@ export type FeatureFlag =
   | 'enableBanking'
   | 'sankeyReport'
   | 'akahuBankSync'
-  | 'mobileCalculator';
+  | 'mobileCalculator'
+  | 'categoryTags';
 
 /**
  * Cross-device preferences. These sync across devices when they are changed.

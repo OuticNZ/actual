@@ -3,6 +3,7 @@ import type {
   AccountEntity,
   CategoryEntity,
   CategoryGroupEntity,
+  CategoryTagEntity,
   PayeeEntity,
   ScheduleEntity,
   TagEntity,
@@ -139,6 +140,26 @@ export const tagModel = {
   },
 
   fromExternal(tag: Partial<APITagEntity>): Partial<TagEntity> {
+    return tag;
+  },
+};
+
+export type APICategoryTagEntity = Pick<
+  CategoryTagEntity,
+  'id' | 'name' | 'color' | 'description'
+>;
+
+export const categoryTagModel = {
+  toExternal(tag: CategoryTagEntity): APICategoryTagEntity {
+    return {
+      id: tag.id,
+      name: tag.name,
+      color: tag.color ?? null,
+      description: tag.description ?? null,
+    };
+  },
+
+  fromExternal(tag: Partial<APICategoryTagEntity>): Partial<CategoryTagEntity> {
     return tag;
   },
 };

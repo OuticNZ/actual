@@ -376,6 +376,15 @@ export type Modal =
         onDelete: (categoryId: CategoryEntity['id']) => void;
         onToggleVisibility: (categoryId: CategoryEntity['id']) => void;
         onEditAutomations?: (categoryId: CategoryEntity['id']) => void;
+        onEditTags?: (categoryId: CategoryEntity['id']) => void;
+        onClose?: () => void;
+      };
+    }
+  | {
+      name: 'category-tags';
+      options: {
+        categoryId: CategoryEntity['id'];
+        categoryName: string;
         onClose?: () => void;
       };
     }

@@ -79,6 +79,7 @@ type CategoryEntry = {
   accountId?: string;
   payeeName?: string;
   payeeId?: string;
+  tags?: Array<{ id: string; name: string }>;
 };
 
 type SortMode = 'per-group' | 'global' | 'budget-order';
@@ -124,6 +125,7 @@ export const GraphLayers = {
   Budget: 'budget',
   CategoryGroup: 'category_group',
   Category: 'category',
+  CategoryTag: 'category_tag',
 } as const;
 export type GraphLayers = (typeof GraphLayers)[keyof typeof GraphLayers];
 
@@ -134,6 +136,7 @@ export const GRAPH_LAYER_ORDER = [
   GraphLayers.Budget,
   GraphLayers.CategoryGroup,
   GraphLayers.Category,
+  GraphLayers.CategoryTag,
 ] as const;
 
 export function isGraphLayer(value: unknown): value is GraphLayers {
@@ -307,24 +310,31 @@ export function createBudgetSpreadsheet(
       conditionsOp,
     );
 
-    const categoryData: CategoryEntry[] = filteredCategoryGroups
-      .flatMap(group =>
-        group.categories.map(cat => {
-          const rawValue = group.is_income
-            ? (cat.received ?? 0)
-            : (cat.budgeted ?? 0);
-          return {
-            categoryGroup: group.name,
-            categoryGroupId: group.id,
-            category: cat.name,
-            categoryId: cat.id,
-            isIncome: group.is_income,
-            isNegative: rawValue < 0,
-            value: rawValue,
-          };
-        }),
+    const categoryData: CategoryEntry[] = (
+      await Promise.all(
+        filteredCategoryGroups.flatMap(group =>
+          group.categories.map(async cat => {
+            const rawValue = group.is_income
+              ? (cat.received ?? 0)
+              : (cat.budgeted ?? 0);
+            const tags = (await send(
+              'category-tags/get-category-tags',
+              cat.id,
+            )) as Array<{ id: string; name: string }>;
+            return {
+              categoryGroup: group.name,
+              categoryGroupId: group.id,
+              category: cat.name,
+              categoryId: cat.id,
+              isIncome: group.is_income,
+              isNegative: rawValue < 0,
+              value: rawValue,
+              tags,
+            };
+          }),
+        ),
       )
-      .filter(entry => entry.value !== 0);
+    ).filter(entry => entry.value !== 0);
 
     const nextMonthResponse = (await send('api/budget-month', {
       month: monthUtils.nextMonth(end),
@@ -525,6 +535,13 @@ async function fetchCategoryData(
                 { payeeName: { $id: '$payee.name' } },
               ]),
           );
+          const tags = (await send(
+            'category-tags/get-category-tags',
+            category.id,
+          )) as Array<{
+            id: string;
+            name: string;
+          }>;
           return results.data.map(
             (row: {
               amount?: number;
@@ -545,6 +562,7 @@ async function fetchCategoryData(
                 accountId: row.accountId ?? '',
                 payeeName: row.payeeName ?? '',
                 payeeId: row.payeeId ?? '',
+                tags,
               }) satisfies CategoryEntry,
           );
         }),
@@ -564,6 +582,18 @@ async function fetchCategoryData(
   }
 
   return allCategoryData;
+}
+
+function addCategoryTagNodes(graph: Graph, entry: CategoryEntry): void {
+  if (!entry.tags || entry.tags.length === 0) {
+    return;
+  }
+
+  for (const tag of entry.tags) {
+    const tagKey = `tag_${tag.id}`;
+    addNode(graph, tagKey, GraphLayers.CategoryTag, tag.name);
+    addValueToLink(graph, entry.categoryId, tagKey, entry.value);
+  }
 }
 
 export function createBudgetGraph(
@@ -624,6 +654,7 @@ export function createBudgetGraph(
           SpecialNodeKeys.Budgeted,
           entry.value,
         );
+        addCategoryTagNodes(graph, entry);
       } else {
         addNodeWithLabel(
           graph,
@@ -814,6 +845,7 @@ export function createTransactionsGraph(categoryData: CategoryEntry[]): Graph {
             entry.categoryId,
             entry.value,
           );
+          addCategoryTagNodes(graph, entry);
         } else {
           // Category > Account
           addNode(
