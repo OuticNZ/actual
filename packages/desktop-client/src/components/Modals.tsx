@@ -22,6 +22,7 @@ import { CategoryAutocompleteModal } from './modals/CategoryAutocompleteModal';
 import { CategoryGroupAutocompleteModal } from './modals/CategoryGroupAutocompleteModal';
 import { CategoryGroupMenuModal } from './modals/CategoryGroupMenuModal';
 import { CategoryMenuModal } from './modals/CategoryMenuModal';
+import { CategoryTagsModal } from './modals/CategoryTagsModal';
 import { CloseAccountModal } from './modals/CloseAccountModal';
 import { ConfirmCategoryDeleteModal } from './modals/ConfirmCategoryDeleteModal';
 import { ConfirmDeleteModal } from './modals/ConfirmDeleteModal';
@@ -287,6 +288,9 @@ export function Modals() {
 
         case 'category-menu':
           return <CategoryMenuModal key={key} {...modal.options} />;
+
+        case 'category-tags':
+          return <CategoryTagsModal key={key} {...modal.options} />;
 
         case 'envelope-budget-menu':
           return (

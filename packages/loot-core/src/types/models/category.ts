@@ -1,4 +1,5 @@
 import type { CategoryGroupEntity } from './category-group';
+import type { CategoryTagEntity } from './category-tag';
 
 export type CategoryEntity = {
   id: string;
@@ -11,4 +12,5 @@ export type CategoryEntity = {
   sort_order?: number;
   tombstone?: boolean;
   hidden?: boolean;
+  tags?: CategoryTagEntity[];
 };

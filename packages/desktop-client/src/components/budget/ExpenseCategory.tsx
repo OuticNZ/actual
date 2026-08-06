@@ -32,6 +32,7 @@ type ExpenseCategoryProps = {
   onEditMonth?: (id: CategoryEntity['id'], month: string) => void;
   onSave?: ComponentProps<typeof SidebarCategory>['onSave'];
   onDelete?: ComponentProps<typeof SidebarCategory>['onDelete'];
+  onEditTags?: ComponentProps<typeof SidebarCategory>['onEditTags'];
   onDragChange: OnDragChangeCallback<CategoryEntity>;
   onBudgetAction: (month: string, action: string, arg: unknown) => void;
   onShowActivity: (id: CategoryEntity['id'], month: string) => void;
@@ -47,6 +48,7 @@ export function ExpenseCategory({
   onEditMonth,
   onSave,
   onDelete,
+  onEditTags,
   onBudgetAction,
   onShowActivity,
   onDragChange,
@@ -100,6 +102,7 @@ export function ExpenseCategory({
           onEditName={onEditName}
           onSave={onSave}
           onDelete={onDelete}
+          onEditTags={onEditTags}
         />
 
         <RenderMonths>

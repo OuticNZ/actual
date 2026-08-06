@@ -45,6 +45,8 @@ import type {
   DbCategory,
   DbCategoryGroup,
   DbCategoryMapping,
+  DbCategoryTag,
+  DbCategoryTagMapping,
   DbClockMessage,
   DbPayee,
   DbPayeeMapping,
@@ -1033,5 +1035,92 @@ export function findTags() {
       WHERE tombstone = 0 AND notes LIKE ?
     `,
     ['%#%'],
+  );
+}
+
+// Category tags
+
+export function getCategoryTags() {
+  return all<DbCategoryTag>(`
+    SELECT id, name, color, description
+    FROM category_tags
+    WHERE tombstone = 0
+  `);
+}
+
+export function getAllCategoryTags() {
+  return all<DbCategoryTag>(`
+    SELECT id, name, color, description
+    FROM category_tags
+  `);
+}
+
+export function insertCategoryTag(
+  tag: Omit<DbCategoryTag, 'id' | 'tombstone'>,
+): Promise<DbCategoryTag['id']> {
+  return insertWithUUID('category_tags', tag);
+}
+
+export async function deleteCategoryTag(tag: Pick<DbCategoryTag, 'id'>) {
+  // Delete all mappings for this tag first
+  const mappings = await all<DbCategoryTagMapping>(
+    'SELECT id FROM category_tag_mapping WHERE tag_id = ?',
+    [tag.id],
+  );
+  await Promise.all(mappings.map(m => delete_('category_tag_mapping', m.id)));
+  return delete_('category_tags', tag.id);
+}
+
+export function updateCategoryTag(
+  tag: Partial<DbCategoryTag> & Pick<DbCategoryTag, 'id'>,
+) {
+  return update('category_tags', tag);
+}
+
+export function getCategoryTagMappings() {
+  return all<DbCategoryTagMapping>(`
+    SELECT id, category_id, tag_id
+    FROM category_tag_mapping
+    WHERE tombstone = 0
+  `);
+}
+
+export function insertCategoryTagMapping(
+  mapping: Omit<DbCategoryTagMapping, 'id' | 'tombstone'>,
+): Promise<DbCategoryTagMapping['id']> {
+  return insertWithUUID('category_tag_mapping', mapping);
+}
+
+export async function deleteCategoryTagMapping(
+  mapping: Pick<DbCategoryTagMapping, 'id'>,
+) {
+  return delete_('category_tag_mapping', mapping.id);
+}
+
+export async function getTagsForCategory(
+  categoryId: DbCategory['id'],
+): Promise<DbCategoryTag[]> {
+  return all<DbCategoryTag>(
+    `
+    SELECT ct.id, ct.name, ct.color, ct.description
+    FROM category_tag_mapping ctm
+    JOIN category_tags ct ON ct.id = ctm.tag_id
+    WHERE ctm.category_id = ? AND ctm.tombstone = 0 AND ct.tombstone = 0
+  `,
+    [categoryId],
+  );
+}
+
+export async function getCategoriesForTag(
+  tagId: DbCategoryTag['id'],
+): Promise<DbCategory[]> {
+  return all<DbCategory>(
+    `
+    SELECT c.*
+    FROM category_tag_mapping ctm
+    JOIN categories c ON c.id = ctm.category_id
+    WHERE ctm.tag_id = ? AND ctm.tombstone = 0 AND c.tombstone = 0
+  `,
+    [tagId],
   );
 }

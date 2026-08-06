@@ -363,3 +363,18 @@ export type DbTag = {
   tombstone: 1 | 0;
   hidden?: 1 | 0;
 };
+
+export type DbCategoryTag = {
+  id: string;
+  name: string;
+  color?: string | null;
+  description?: string | null;
+  tombstone: 1 | 0;
+};
+
+export type DbCategoryTagMapping = {
+  id: string;
+  category_id: DbCategory['id'];
+  tag_id: DbCategoryTag['id'];
+  tombstone: 1 | 0;
+};

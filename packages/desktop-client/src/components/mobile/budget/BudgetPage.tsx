@@ -436,6 +436,20 @@ export function BudgetPage() {
               onEditNotes: onOpenCategoryNotesModal,
               onDelete: onDeleteCategory,
               onToggleVisibility: onToggleCategoryVisibility,
+              onEditTags: (categoryId: string) => {
+                const cat = categories.find(c => c.id === categoryId);
+                dispatch(
+                  pushModal({
+                    modal: {
+                      name: 'category-tags',
+                      options: {
+                        categoryId,
+                        categoryName: cat?.name ?? '',
+                      },
+                    },
+                  }),
+                );
+              },
               ...(canEditAutomations && {
                 onEditAutomations: (categoryId: string) => {
                   dispatch(collapseModals({ rootModalName: 'category-menu' }));

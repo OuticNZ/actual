@@ -17,6 +17,8 @@
     },
     "#accounts": "./src/accounts/index.ts",
     "#budget": "./src/budget/index.ts",
+    "#category-tags": "./src/category-tags/index.ts",
+    "#category-tags/*": "./src/category-tags/*.ts",
     "#payees": "./src/payees/index.ts",
     "#queries": "./src/queries/index.ts",
     "#redux": "./src/redux/index.ts",

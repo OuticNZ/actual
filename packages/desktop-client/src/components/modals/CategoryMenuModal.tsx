@@ -44,6 +44,7 @@ export function CategoryMenuModal({
   onDelete,
   onToggleVisibility,
   onEditAutomations,
+  onEditTags,
   onClose,
 }: CategoryMenuModalProps) {
   const { t } = useTranslation();
@@ -74,6 +75,10 @@ export function CategoryMenuModal({
 
   const _onEditAutomations = () => {
     onEditAutomations?.(category.id);
+  };
+
+  const _onEditTags = () => {
+    onEditTags?.(category.id);
   };
 
   const buttonStyle: CSSProperties = {
@@ -166,6 +171,16 @@ export function CategoryMenuModal({
                     style={{ paddingRight: 5 }}
                   />
                   <Trans>Budget automations</Trans>
+                </Button>
+              )}
+              {onEditTags && (
+                <Button style={buttonStyle} onPress={_onEditTags}>
+                  <SvgChartPie
+                    width={20}
+                    height={20}
+                    style={{ paddingRight: 5 }}
+                  />
+                  <Trans>Tags</Trans>
                 </Button>
               )}
             </View>

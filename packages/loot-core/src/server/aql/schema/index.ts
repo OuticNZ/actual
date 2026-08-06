@@ -216,6 +216,19 @@ export const schema = {
     created_at: f('integer', { required: true }),
     tombstone: f('boolean'),
   },
+  category_tags: {
+    id: f('id'),
+    name: f('string'),
+    color: f('string'),
+    description: f('string'),
+    tombstone: f('boolean'),
+  },
+  category_tag_mapping: {
+    id: f('id'),
+    category_id: f('id', { ref: 'categories' }),
+    tag_id: f('id', { ref: 'category_tags' }),
+    tombstone: f('boolean'),
+  },
 };
 
 export const schemaConfig: SchemaConfig = {

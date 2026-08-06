@@ -28,6 +28,8 @@ import { useNavigate } from '#hooks/useNavigate';
 import { SheetNameProvider } from '#hooks/useSheetName';
 import { useSpreadsheet } from '#hooks/useSpreadsheet';
 import { useSyncedPref } from '#hooks/useSyncedPref';
+import { pushModal } from '#modals/modalsSlice';
+import { useDispatch } from '#redux';
 
 import { AutoSizingBudgetTable } from './DynamicBudgetTable';
 import * as envelopeBudget from './envelope/EnvelopeBudgetComponents';
@@ -40,6 +42,7 @@ export function Budget() {
   const currentMonth = monthUtils.currentMonth();
   const spreadsheet = useSpreadsheet();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [summaryCollapsed, setSummaryCollapsedPref] = useLocalPref(
     'budget.summaryCollapsed',
   );
@@ -150,6 +153,23 @@ export function Budget() {
     });
   };
 
+  const onEditTags = (categoryId: string) => {
+    const category = categoryGroups
+      ?.flatMap(g => g.categories ?? [])
+      .find(c => c.id === categoryId);
+    dispatch(
+      pushModal({
+        modal: {
+          name: 'category-tags',
+          options: {
+            categoryId,
+            categoryName: category?.name ?? '',
+          },
+        },
+      }),
+    );
+  };
+
   const saveCategory = useSaveCategoryMutation();
   const onSaveCategory = category => {
     saveCategory.mutate({ category });
@@ -206,6 +226,7 @@ export function Budget() {
           onSortCategories={(groupId, direction) =>
             sortCategories.mutate({ groupId, direction })
           }
+          onEditTags={onEditTags}
         />
       </TrackingBudgetProvider>
     );
@@ -235,6 +256,7 @@ export function Budget() {
           onSortCategories={(groupId, direction) =>
             sortCategories.mutate({ groupId, direction })
           }
+          onEditTags={onEditTags}
         />
       </EnvelopeBudgetProvider>
     );

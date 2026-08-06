@@ -38,6 +38,7 @@ type BudgetTableProps = {
   onDeleteCategory: (id: CategoryEntity['id']) => void;
   onSaveGroup: (group: CategoryGroupEntity) => void;
   onDeleteGroup: (id: CategoryGroupEntity['id']) => void;
+  onEditTags?: (id: CategoryEntity['id']) => void;
   onApplyBudgetTemplatesInGroup: (
     categoryIds: Array<CategoryEntity['id']>,
   ) => void;
@@ -69,6 +70,7 @@ export function BudgetTable(props: BudgetTableProps) {
     onDeleteCategory,
     onSaveGroup,
     onDeleteGroup,
+    onEditTags,
     onApplyBudgetTemplatesInGroup,
     onSortCategories,
     onReorderCategory,
@@ -321,6 +323,7 @@ export function BudgetTable(props: BudgetTableProps) {
                 onSaveGroup={onSaveGroup}
                 onDeleteCategory={onDeleteCategory}
                 onDeleteGroup={onDeleteGroup}
+                onEditTags={onEditTags}
                 onReorderCategory={_onReorderCategory}
                 onReorderGroup={_onReorderGroup}
                 onBudgetAction={onBudgetAction}
