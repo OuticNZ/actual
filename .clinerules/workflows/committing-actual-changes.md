@@ -25,31 +25,39 @@ The PR-template rule and the rest live in the rules file. Read it before each co
 ## Workflow steps
 
 ### 1. Read the rules
+
 - Read `.github/agents/pr-and-commit-rules.md` (authoritative).
 - Read `.clinerules/commit-and-pr-rules.md` and `.clinerules/release-notes.md`.
 
 ### 2. Pre-commit quality gate
+
 Run from the repo root (never in child workspaces):
+
 - `yarn typecheck`
 - `yarn lint:fix`
 - Relevant tests (`yarn test`, or workspace-specific tests for the changed package)
 
 ### 3. Review the diff
+
 - Confirm only intended files are staged.
 - No generated files: build artifacts (`packages/*/lib-dist/`, `packages/*/dist/`, `packages/*/build/`), auto-generated icons (`packages/component-library/src/icons/`), lockfile churn unrelated to the change.
 - User-facing strings are translated (i18n) — regenerate with `yarn generate:i18n` if needed.
 
 ### 4. Release note check
+
 - If the change is user-facing, confirm a release note exists in `upcoming-release-notes/` (see `.clinerules/release-notes.md`). If missing, create one.
 
 ### 5. Craft the commit message
+
 - Conventional Commits format. Small, focused, atomic.
 - **Prefix with `[AI]`** — e.g. `[AI] Fix type error in account validation`.
 
 ### 6. Commit with hooks
+
 - **Never use `--no-verify`.** Let the git-guard hook and `nano-staged` (oxfmt + oxlint) run.
 
 ### 7. Opening a PR (if applicable)
+
 - **PR title MUST be prefixed with `[AI]`** — nothing checks this for you.
 - **Leave the PR template blank** — do not fill in `.github/PULL_REQUEST_TEMPLATE.md`; leave all placeholders and checkboxes untouched. (Exception: if a human explicitly asks you to fill it out, do so in Chinese 简体中文.)
 - **Apply the `AI generated` label.**

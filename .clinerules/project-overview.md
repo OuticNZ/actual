@@ -10,22 +10,22 @@
 
 ## Core Packages
 
-| Package | Workspace name | Purpose |
-| ------- | -------------- | ------- |
-| `loot-core` | `@actual-app/core` | Core application logic (business logic, DB, calculations). Platform-agnostic; exports for browser and node. |
-| `desktop-client` | `@actual-app/web` | React-based UI for web and desktop. E2E tests (Playwright), Vite bundling. |
-| `desktop-electron` | `desktop-electron` | Electron wrapper for the desktop app. |
-| `api` | `@actual-app/api` | Public API for programmatic access to Actual. |
-| `sync-server` | `@actual-app/sync-server` | Synchronization server for multi-device support. Express-based; transitioning to TypeScript. |
-| `component-library` | `@actual-app/components` | Reusable React UI components, theme system, icons. |
-| `crdt` | `@actual-app/crdt` | CRDT implementation for data synchronization. |
-| `plugins-service` | `plugins-service` | Service for handling plugins/extensions. |
-| `eslint-plugin-actual` | `eslint-plugin-actual` | Custom lint rules (loaded as an oxlint JS plugin). |
-| `docs` | `docs` | Documentation website (Docusaurus). |
-| `cli` | `@actual-app/cli` | CLI for Actual Budget. |
-| `mobile-client` | `mobile-client` | Capacitor-based iOS/Android app. |
-| `vite-plugin-peggy` | `@actual-app/vite-plugin-peggy` | Vite plugin for Peggy grammars (used by loot-core). |
-| `ci-actions` | `ci-actions` | CI helper package. |
+| Package                | Workspace name                  | Purpose                                                                                                     |
+| ---------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `loot-core`            | `@actual-app/core`              | Core application logic (business logic, DB, calculations). Platform-agnostic; exports for browser and node. |
+| `desktop-client`       | `@actual-app/web`               | React-based UI for web and desktop. E2E tests (Playwright), Vite bundling.                                  |
+| `desktop-electron`     | `desktop-electron`              | Electron wrapper for the desktop app.                                                                       |
+| `api`                  | `@actual-app/api`               | Public API for programmatic access to Actual.                                                               |
+| `sync-server`          | `@actual-app/sync-server`       | Synchronization server for multi-device support. Express-based; transitioning to TypeScript.                |
+| `component-library`    | `@actual-app/components`        | Reusable React UI components, theme system, icons.                                                          |
+| `crdt`                 | `@actual-app/crdt`              | CRDT implementation for data synchronization.                                                               |
+| `plugins-service`      | `plugins-service`               | Service for handling plugins/extensions.                                                                    |
+| `eslint-plugin-actual` | `eslint-plugin-actual`          | Custom lint rules (loaded as an oxlint JS plugin).                                                          |
+| `docs`                 | `docs`                          | Documentation website (Docusaurus).                                                                         |
+| `cli`                  | `@actual-app/cli`               | CLI for Actual Budget.                                                                                      |
+| `mobile-client`        | `mobile-client`                 | Capacitor-based iOS/Android app.                                                                            |
+| `vite-plugin-peggy`    | `@actual-app/vite-plugin-peggy` | Vite plugin for Peggy grammars (used by loot-core).                                                         |
+| `ci-actions`           | `ci-actions`                    | CI helper package.                                                                                          |
 
 ## Task Orchestration with Lage
 
